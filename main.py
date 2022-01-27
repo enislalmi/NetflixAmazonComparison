@@ -141,6 +141,21 @@ amazon_shows_freq = cleanup_multiple_listings(amazon_shows_freq)
 shows_amazon_df =  pd.DataFrame(list(amazon_shows_freq.items()),columns = ['Type of Listing','Frequency'])
 listings_frequencies(shows_amazon_df)
 
+
+st.write("How are the two platforms divided in the type of listings they have?")
+def bar_frequencies_both(shows_amazon_df, shows_netflix_df):
+    amazon_platform = 'Amazon'
+    netflix_platform = 'Netflix'
+    shows_amazon_df['Streaming'] = amazon_platform
+    shows_netflix_df['Streaming'] = netflix_platform
+    frames = [shows_amazon_df, shows_netflix_df]
+
+    result = pd.concat(frames)
+    fig = px.bar(result, x="Streaming", y="Frequency", color="Type of Listing", title="Comparison between listings in the two streaming platforms")
+    
+    st.plotly_chart(fig)
+
+bar_frequencies_both(shows_amazon_df, shows_netflix_df)
 organize_ratings(amazon_df)
 def content_rating(df):
     
