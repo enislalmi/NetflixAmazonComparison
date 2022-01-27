@@ -60,7 +60,51 @@ def country_frequencies(df):
     return df['country'].value_counts()
 
 
-if __name__ == '__main__':
+def information(df):
+    return df.info()
+
+def description(df):
+    return df.describe()
+
+def correlation(df):
+    return df.corr()
+
+print("Netflix")
+print(netflix_df['rating'].value_counts())
+print("Amazon")
+print(amazon_df['rating'].value_counts())
+
+#amazon vs netflix:
+#13+ pg-13
+#16+ nc-17
+#18+ R
+#7+ tv-y7
+#unrated nr
+#not_rate nr
+#ages_18_ R
+#ages_16_ nc-17
+#all_ages G
+#16 nc-17
+
+def organize_ratings(df):
+        df.loc[df['rating'] == "13+", 'rating'] = "PG-13"
+        df.loc[df['rating'] == "16+", 'rating'] = 'NC-17'
+        df.loc[df['rating'] == "18+", 'rating'] = 'R'
+        df.loc[df['rating'] == "7+", 'rating'] = 'TV-Y7'
+        df.loc[df['rating'] == "UNRATED", 'rating'] = 'NR'
+        df.loc[df['rating'] == "NOT_RATE", 'rating'] = 'NR'
+        df.loc[df['rating'] == "AGES_18_", 'rating'] = 'R'
+        df.loc[df['rating'] == "AGES_16_", 'rating'] = 'NC-17'
+        df.loc[df['rating'] == "ALL", 'rating'] = 'G'
+        df.loc[df['rating'] == "ALL_AGES", 'rating'] = 'G'
+        df.loc[df['rating'] == "16", 'rating'] = 'NC-17'
+
+
+
+
+
+
+#if __name__ == '__main__':
 
     #netflix_df = delete_ids(netflix_df)
     #amazon_df = delete_ids(amazon_df)
@@ -70,5 +114,6 @@ if __name__ == '__main__':
     #amazon_df = change_date_format(amazon_df)
     #netflix_country_freq = country_frequencies(netflix_df)
     #cleanup_countries(netflix_country_freq)
-    amazon_country_freq = country_frequencies(amazon_df)
-    cleanup_countries(amazon_country_freq)
+    #amazon_country_freq = country_frequencies(amazon_df)
+    #cleanup_countries(amazon_country_freq)
+    #organize_ratings(amazon_df)
