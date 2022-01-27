@@ -49,7 +49,8 @@ def fill_missing_data(df):
 
 def change_date_format(df):
     df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
-    df["date_added"] = df['date_added'].dt.strftime('%m-%Y')
+    #df["date_added"] = df['date_added'].dt.strftime('%m-%Y')
+    df["date_added"] = df['date_added'].dt.strftime('%Y')
 
     return df
 
@@ -113,6 +114,17 @@ def organize_ratings(df):
         df.loc[df['rating'] == "16", 'rating'] = 'NC-17'
 
 
+def listings_added_by_year(df):
+    df = change_date_format(df)
+    year_added_frequencies = df['date_added'].value_counts().to_dict()
+    year_added_frequencies = pd.DataFrame(year_added_frequencies.items(), columns=['Year Added', 'Frequency'])
+    fig = px.line(year_added_frequencies, x='Year Added', y='Frequency',
+              title='Movies added by year',width=800, height=400)
+
+    fig.update_xaxes(
+        dtick="M1",
+        tickformat="%b\n%Y")
+    st.plotly_chart(fig)
 
 
 
@@ -193,6 +205,11 @@ def newest_oldest_listing():
 st.write("What are the oldest and newest listings?")
 
 newest_oldest_listing()
+
+
+st.write("How are the movies added by years in Netflix?")
+listings_added_by_year(netflix_df)
+
 
 #if __name__ == '__main__':
 
