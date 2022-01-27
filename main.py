@@ -6,7 +6,7 @@ import streamlit as st
 import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
-
+import plotly.io as pio
 
 st.header("Netflix VS Amazon - Comparison")
 st.write("Seeing two giants of streaming platforms through data")
@@ -15,7 +15,7 @@ netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
 
 
-#''' Function to delete the ids, as the title is a unique value and having the ids is just
+    #''' Function to delete the ids, as the title is a unique value and having the ids is just
 #unneccesary'''
 
 
@@ -141,6 +141,43 @@ amazon_shows_freq = cleanup_multiple_listings(amazon_shows_freq)
 shows_amazon_df =  pd.DataFrame(list(amazon_shows_freq.items()),columns = ['Type of Listing','Frequency'])
 listings_frequencies(shows_amazon_df)
 
+organize_ratings(amazon_df)
+def content_rating(df):
+    
+    fig = px.pie(df, values=df['rating'].value_counts(), names=df['rating'].dropna().unique(),
+                title='Ratings of the listings:')
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+    st.plotly_chart(fig)
+
+st.write("Which is the target audience of Netflix? How is the content rating of its shows? ")
+content_rating(netflix_df)
+
+st.write("Which is the target audience of Amazon? How is the content rating of its shows? ")
+content_rating(amazon_df)
+
+def newest_oldest_listing():
+    platform = ['Netflix', 'Amazon', 'Netflix', 'Amazon']
+    year = [netflix_df['release_year'].max(), amazon_df['release_year'].max(),netflix_df['release_year'].min(),amazon_df['release_year'].min()]
+
+    data = [dict(
+    type = 'scatter',
+    x = platform,
+    y = year,
+    mode = 'markers',
+    
+    )]
+
+    layout = dict(
+        title = 'Newest and Oldest movies across both platforms'
+    )
+
+    fig_dict = dict(data=data, layout=layout)
+
+    st.plotly_chart(fig_dict)
+
+st.write("What are the oldest and newest listings?")
+
+newest_oldest_listing()
 
 #if __name__ == '__main__':
 
