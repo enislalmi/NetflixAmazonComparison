@@ -1,12 +1,22 @@
+from bleach import clean
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+import plotly.graph_objs as go
+import plotly as py
+
+
+st.header("Netflix VS Amazon - Comparison")
+st.write("Seeing two giants of streaming platforms through data")
 
 netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
 
 
-''' Function to delete the ids, as the title is a unique value and having the ids is just
-unneccesary'''
+#''' Function to delete the ids, as the title is a unique value and having the ids is just
+#unneccesary'''
 
 
 def delete_ids(df):
@@ -24,11 +34,11 @@ def check_missing_data(df):
 
 
 def fill_missing_data(df):
-    '''For the country missing data the most common country could be used to fill null values'''
+    #'''For the country missing data the most common country could be used to fill null values'''
     df['country'] = df['country'].fillna(df['country'].mode()[0])
 
-    '''Something that was seen was that most of the TV Shows did not have a director, that is
-    because most of them have multiple directors'''
+    #'''Something that was seen was that most of the TV Shows did not have a director, that is
+   # because most of them have multiple directors'''
     df['cast'].replace(np.nan, 'Null values', inplace=True)
     df['director'].replace(np.nan, 'Multiple Directors', inplace=True)
 
@@ -44,9 +54,8 @@ def change_date_format(df):
     return df
 
 
-'''For the movies/tv shows that have more than country, I will be countring only the first country
-which coincides with the country where the movie was filmed the most'''
-
+#For the movies/tv shows that have more than country, I will be countring only the first country
+#which coincides with the country where the movie was filmed the most
 
 def cleanup_countries(df):
 
@@ -69,22 +78,23 @@ def description(df):
 def correlation(df):
     return df.corr()
 
-print("Netflix")
-print(netflix_df['rating'].value_counts())
-print("Amazon")
-print(amazon_df['rating'].value_counts())
+country_frequencies_netflix = country_frequencies(netflix_df)
+country_frequencies_netflix = cleanup_countries(country_frequencies_netflix)
+geo_netflix_df =  pd.DataFrame(list(country_frequencies_netflix.items()),columns = ['country','freq'])
+country_frequencies_amazon = country_frequencies(amazon_df)
+country_frequencies_amazon = cleanup_countries(country_frequencies_amazon)
+geo_amazon_df =  pd.DataFrame(list(country_frequencies_amazon.items()),columns = ['country','freq'])
 
-#amazon vs netflix:
-#13+ pg-13
-#16+ nc-17
-#18+ R
-#7+ tv-y7
-#unrated nr
-#not_rate nr
-#ages_18_ R
-#ages_16_ nc-17
-#all_ages G
-#16 nc-17
+
+def geo_map(df):
+    data = dict (
+    type = 'choropleth',
+    locations = df['country'],
+    locationmode='country names',
+    z=df['freq'])
+    map = go.Figure(data=[data])
+    st.plotly_chart(map)
+  
 
 def organize_ratings(df):
         df.loc[df['rating'] == "13+", 'rating'] = "PG-13"
@@ -104,6 +114,11 @@ def organize_ratings(df):
 
 
 
+st.write("Where were Netflix movies shot?")
+geo_map(geo_netflix_df)  
+st.write("Where were Amazon movies shot?")
+geo_map(geo_amazon_df)  
+
 #if __name__ == '__main__':
 
     #netflix_df = delete_ids(netflix_df)
@@ -117,3 +132,4 @@ def organize_ratings(df):
     #amazon_country_freq = country_frequencies(amazon_df)
     #cleanup_countries(amazon_country_freq)
     #organize_ratings(amazon_df)
+    
