@@ -1,4 +1,3 @@
-from bleach import clean
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,6 +5,7 @@ import seaborn as sns
 import streamlit as st
 import plotly.graph_objs as go
 import plotly as py
+import plotly.express as px
 
 
 st.header("Netflix VS Amazon - Comparison")
@@ -57,16 +57,19 @@ def change_date_format(df):
 #For the movies/tv shows that have more than country, I will be countring only the first country
 #which coincides with the country where the movie was filmed the most
 
-def cleanup_countries(df):
+def cleanup_multiple_listings(df):
 
-    countries_dict = df.to_dict()
+    dict = df.to_dict()
 
-    return {key.split(',')[0]: (value+countries_dict.get(key.split(',')[0], 0)) if ',' in key else value
-            for key, value in countries_dict.items()}
+    return {key.split(',')[0]: (value+dict.get(key.split(',')[0], 0)) if ',' in key else value
+            for key, value in dict.items()}
 
 
 def country_frequencies(df):
     return df['country'].value_counts()
+
+def show_frequencies(df):
+    return df['listed_in'].value_counts()
 
 
 def information(df):
@@ -79,10 +82,10 @@ def correlation(df):
     return df.corr()
 
 country_frequencies_netflix = country_frequencies(netflix_df)
-country_frequencies_netflix = cleanup_countries(country_frequencies_netflix)
+country_frequencies_netflix = cleanup_multiple_listings(country_frequencies_netflix)
 geo_netflix_df =  pd.DataFrame(list(country_frequencies_netflix.items()),columns = ['country','freq'])
 country_frequencies_amazon = country_frequencies(amazon_df)
-country_frequencies_amazon = cleanup_countries(country_frequencies_amazon)
+country_frequencies_amazon = cleanup_multiple_listings(country_frequencies_amazon)
 geo_amazon_df =  pd.DataFrame(list(country_frequencies_amazon.items()),columns = ['country','freq'])
 
 
@@ -117,7 +120,27 @@ def organize_ratings(df):
 st.write("Where were Netflix movies shot?")
 geo_map(geo_netflix_df)  
 st.write("Where were Amazon movies shot?")
-geo_map(geo_amazon_df)  
+geo_map(geo_amazon_df) 
+
+def listings_frequencies(df):
+    fig = px.scatter(df, y=df['Type of Listing'], x=df["Frequency"])
+    fig.update_traces(marker_size=10)
+    st.plotly_chart(fig)
+
+
+st.write("What kind of shows are we watching on Netfix?")
+netflix_shows_freq = show_frequencies(netflix_df)
+netflix_shows_freq = cleanup_multiple_listings(netflix_shows_freq)
+shows_netflix_df =  pd.DataFrame(list(netflix_shows_freq.items()),columns = ['Type of Listing','Frequency'])
+listings_frequencies(shows_netflix_df)
+
+
+st.write("What kind of shows are we watching on Amazon?")
+amazon_shows_freq = show_frequencies(amazon_df)
+amazon_shows_freq = cleanup_multiple_listings(amazon_shows_freq)
+shows_amazon_df =  pd.DataFrame(list(amazon_shows_freq.items()),columns = ['Type of Listing','Frequency'])
+listings_frequencies(shows_amazon_df)
+
 
 #if __name__ == '__main__':
 
