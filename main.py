@@ -8,7 +8,7 @@ import plotly as py
 import plotly.express as px
 import plotly.io as pio
 
-st.header("Netflix VS Amazon - Comparison")
+st.header("Netflix VS Amazon - Comparison - From a Data Science Point of View")
 st.write("Seeing two giants of streaming platforms through data")
 
 netflix_df = pd.read_csv("netflix_titles.csv")
