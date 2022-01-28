@@ -222,6 +222,37 @@ st.write("Netflix")
 released_available(netflix_df)
 
 
+def merge_on_title(df1, df2):
+    return pd.merge(df1, df2, how='inner', on=['title'])
+    
+
+def titles_in_common(df):
+    
+    titles = df['title']
+    type_of_listing = df['type_x']
+
+
+    fig = go.Figure(data=[go.Table(
+    header=dict(
+        values=['<b>Titles in common between Amazon and Netflix</b>','<b>Type of Listing</b>'],
+        line_color='white', fill_color='white',
+        align='center',font=dict(color='black', size=12)
+    ),
+    cells=dict(
+        values=[titles, type_of_listing],
+        line_color='black',
+        fill_color='rgb(49, 130, 189)',
+        align='center', font=dict(color='white', size=11)
+        ))
+    ])
+    st.plotly_chart(fig)
+
+
+st.write("What are the titles in common between Netflix and Amazon?")
+common_titles = merge_on_title(netflix_df, amazon_df)
+titles_in_common(common_titles)
+
+
 #if __name__ == '__main__':
 
     #netflix_df = delete_ids(netflix_df)
