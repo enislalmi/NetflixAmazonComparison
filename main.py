@@ -1,3 +1,4 @@
+from heapq import merge
 from platform import release
 import pandas as pd
 import numpy as np
@@ -16,6 +17,10 @@ st.write("Seeing two giants of streaming platforms through data")
 
 netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
+imdb_df = pd.read_csv('imdb_titles.csv')
+
+
+
 
 
 
@@ -295,12 +300,21 @@ def title_statistics(df1, df2):
 st.write("Show me some statistics!")
 title_statistics(netflix_df, amazon_df)
 
-st.write("Starting modelling")
-df_modelling = merge_on_title(netflix_df, amazon_df)
-df_modelling_all = only_needed_columns_model(df_modelling)
-df_model = filling_missing_data_model(df_modelling)
-print(df_model)
-print(check_missing_data(df_model))
+def fix_modelling_data(concat_df1, concat_df2):
+    all_imdb = pd.concat([concat_df1, concat_df2])
+    all_imdb_up =  all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average']]
+    all_imdb_up.drop_duplicates(subset='title', keep='first')
+    all_imdb_up['director'].replace(np.nan, 'Multiple Directors', inplace=True)
+    return all_imdb_up
+
+amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
+netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
+model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
+
+
+
+
+
 
 
 #if __name__ == '__main__':
