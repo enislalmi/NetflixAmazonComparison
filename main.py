@@ -313,9 +313,42 @@ def fix_modelling_data(concat_df1, concat_df2):
     all_imdb_up['leading_actor'] = all_imdb_up.leading_actor.apply(lambda x : x.split(",")[0])
     return all_imdb_up
 
+
+def records_for_prediction(df):
+    # all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average','cast']]
+   
+    #type, listedin, director, vote_average, duration, title
+    title = df['title']
+    type_of_listing = df['type']
+    listed_in = df ['listed_in']
+    director = df['director']
+    leading_actor = df['leading_actor']
+    duration = df['duration']
+    vote_average = df['vote_average']
+
+
+    fig = go.Figure(data=[go.Table(
+    header=dict(
+        values=['<b>Title</b>','<b>Type of Listing</b>','<b>Listed in</b>','<b>Director</b>','<b>Leading Actor</b>','<b>Duration</b>','<b>Vote average</b>'],
+        line_color='rgb(18,139,181)', fill_color='rgb(222,181,34)',
+        align='center',font=dict(color='rgb(12,11,0)', size=12)
+    ),
+    cells=dict(
+        values=[title, type_of_listing, listed_in, director, leading_actor, duration, vote_average],
+        line_color='rgb(18,139,181)',
+        fill_color='rgb(222,181,34)',
+        align='center', font=dict(color='white', size=11)
+        ))
+    ])
+    st.plotly_chart(fig)
+
+
+    
 amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
 netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
 model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
+st.write("Modelling based on what?")
+records_for_prediction(model_df)
 
 
 
