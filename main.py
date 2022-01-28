@@ -1,6 +1,3 @@
-from heapq import merge
-from platform import release
-from tabnanny import check
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
