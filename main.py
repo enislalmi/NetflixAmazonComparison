@@ -1,3 +1,4 @@
+from platform import release
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
 import plotly.io as pio
+
+
 
 st.header("Netflix VS Amazon - Comparison - From a Data Science Point of View")
 st.write("Seeing two giants of streaming platforms through data")
@@ -209,6 +212,14 @@ newest_oldest_listing()
 
 st.write("How are the movies added by years in Netflix?")
 listings_added_by_year(netflix_df)
+
+def released_available(df):
+    df = change_date_format(df)
+    fig = px.scatter(df.dropna(), x="date_added", y='release_year', color="duration", symbol="type")
+    st.plotly_chart(fig)
+st.write("When were the listings released and when did they become available to us?")
+st.write("Netflix")
+released_available(netflix_df)
 
 
 #if __name__ == '__main__':
