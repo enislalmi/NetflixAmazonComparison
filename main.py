@@ -252,6 +252,29 @@ st.write("What are the titles in common between Netflix and Amazon?")
 common_titles = merge_on_title(netflix_df, amazon_df)
 titles_in_common(common_titles)
 
+def title_statistics(df1, df2):
+    netflix_titles = set(df1['title'])
+    amazon_titles = set(df2['title'])
+    merged_titles = merge_on_title(df1, df2)
+    common_titles = set(merged_titles['title'])
+    unique_titles_netflix = netflix_titles.difference(common_titles)
+    unique_titles_amazon = amazon_titles.difference(common_titles)
+    fig = px.bar(x=["Netflix","Amazon","Common"], y=[len(unique_titles_netflix),len(unique_titles_amazon),len(common_titles)], title="Listings Statistics", color=['red','blue','orange'])
+    fig.update_layout(
+    title="Netflix and Amazon in numbers",
+    xaxis_title="Platforms",
+    yaxis_title="Number of Listings",
+    font=dict(
+        family="Arial, monospace",
+        size=10,
+        color="white"
+    )
+)
+
+    st.plotly_chart(fig)
+
+st.write("Show me some statistics!")
+title_statistics(netflix_df, amazon_df)
 
 #if __name__ == '__main__':
 
