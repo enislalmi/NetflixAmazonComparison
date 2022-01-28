@@ -1,5 +1,6 @@
 from heapq import merge
 from platform import release
+from tabnanny import check
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -302,14 +303,20 @@ title_statistics(netflix_df, amazon_df)
 
 def fix_modelling_data(concat_df1, concat_df2):
     all_imdb = pd.concat([concat_df1, concat_df2])
-    all_imdb_up =  all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average']]
+    all_imdb_up =  all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average','cast']]
     all_imdb_up.drop_duplicates(subset='title', keep='first')
+    all_imdb_up['cast'] = all_imdb_up['cast'].str.split(",", n = 1, expand = True)
+    all_imdb_up = all_imdb_up.rename(columns={'cast': 'leading_actor'})
     all_imdb_up['director'].replace(np.nan, 'Multiple Directors', inplace=True)
+    #leading actor null rate is 2.14 so im dropping those columns
+    all_imdb_up = all_imdb_up.dropna()
+    all_imdb_up['leading_actor'] = all_imdb_up.leading_actor.apply(lambda x : x.split(",")[0])
     return all_imdb_up
 
 amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
 netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
 model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
+
 
 
 
