@@ -18,6 +18,7 @@ netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
 
 
+
     #''' Function to delete the ids, as the title is a unique value and having the ids is just
 #unneccesary'''
 
@@ -130,6 +131,17 @@ def listings_added_by_year(df):
     st.plotly_chart(fig)
 
 
+def filling_missing_data_model(df):
+     #'''For the country missing data the most common country could be used to fill null values'''
+    df['country_x'] = df['country_x'].fillna(df['country_x'].mode()[0])
+
+    #'''Something that was seen was that most of the TV Shows did not have a director, that is
+   # because most of them have multiple directors'''
+    df['director_x'].replace(np.nan, 'Multiple Directors', inplace=True)
+
+    df.dropna(inplace=True)
+    df.drop_duplicates(inplace=True)
+    return df
 
 
 st.write("Where were Netflix movies shot?")
@@ -224,7 +236,14 @@ released_available(netflix_df)
 
 def merge_on_title(df1, df2):
     return pd.merge(df1, df2, how='inner', on=['title'])
-    
+
+
+
+
+def only_needed_columns_model(df):
+    df = df[['title','type_x', 'director_x', 'duration_x', 'listed_in_x', 'rating_x']]
+    return df.rename(columns={'type_x': 'type', 'director_x': 'director','duration_x': 'duration', 'listed_in_x': 'listed_in','rating_x':'rating'})
+
 
 def titles_in_common(df):
     
@@ -275,6 +294,14 @@ def title_statistics(df1, df2):
 
 st.write("Show me some statistics!")
 title_statistics(netflix_df, amazon_df)
+
+st.write("Starting modelling")
+df_modelling = merge_on_title(netflix_df, amazon_df)
+df_modelling_all = only_needed_columns_model(df_modelling)
+df_model = filling_missing_data_model(df_modelling)
+print(df_model)
+print(check_missing_data(df_model))
+
 
 #if __name__ == '__main__':
 
