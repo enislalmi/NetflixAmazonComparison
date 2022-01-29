@@ -13,6 +13,8 @@ import plotly.io as pio
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
+import warnings
+warnings.filterwarnings('ignore')
 
 
 def fix_modelling_data(concat_df1, concat_df2):
@@ -114,51 +116,22 @@ duration = movies_df['duration'].reset_index(drop=True)
 X_encoded = pd.concat([ohe_encoded, duration], axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X_encoded, y_movies, test_size=0.2, random_state=42)
+    X_encoded, y_movies, test_size=0.3, random_state=42)
 
 # best parameters to use as of grid search function below
-# param = {'bootstrap': True, 'max_depth': 90, 'max_features': 3, 'min_samples_leaf': 4,
-#          'min_samples_split': 10, 'n_estimators': 100}
 
-# rf_reg = RandomForestRegressor(bootstrap=True, max_depth=90, max_features=3, min_samples_leaf=4,
-# min_samples_split=10, n_estimators=100)
+rf_reg = RandomForestRegressor(
+    n_estimators=300, max_depth=60, max_features=50, min_samples_split=2)
 
-
-# param_grid = {
-#     'bootstrap': [True],
-#     'max_depth': [80, 90, 100, 110],
-#     'max_features': [2, 3],
-#     'min_samples_leaf': [3, 4, 5],
-#     'min_samples_split': [8, 10, 12],
-#     'n_estimators': [100, 200, 300, 1000]
-# }
-
-# grid_search = GridSearchCV(estimator = rf_reg, param_grid = param_grid,
-#                           cv = 3, n_jobs = -1, verbose = 2)
+#train_MAE = 0.6535916391533556
+#test_MAE = 1.2269102747161142
 
 
-#rf_reg.fit(X_train, y_train)
-
-# print(grid_search.best_params_)
+rf_reg.fit(X_train, y_train)
 
 
-# best_grid = grid_search.best_estimator_
-# grid_accuracy = evaluate(best_grid, X_test, y_test)
+train_pred_y = rf_reg.predict(X_train)
+test_pred_y = rf_reg.predict(X_test)
 
-
-# train_pred_y = rf_reg.predict(X_train)
-# test_pred_y = rf_reg.predict(X_test)
-
-# print(f"train_MAE = {mean_squared_error(y_train, train_pred_y)}")
-# print(f"test_MAE = {mean_squared_error(y_test, test_pred_y)}")
-
-param_grid = {'bootstrap': [True], 'max_depth': [5, 10, None], 'max_features': [
-    'auto', 'log2'], 'n_estimators': [5, 6, 7, 8, 9, 10, 11, 12, 13, 15]}
-rfr = RandomForestRegressor(random_state=1)
-
-g_search = GridSearchCV(estimator=rfr, param_grid=param_grid,
-                        cv=3, n_jobs=1, verbose=2, return_train_score=True)
-
-g_search.fit(X_train, y_train)
-
-print(g_search.best_params_)
+print(f"train_MSE = {mean_squared_error(y_train, train_pred_y)}")
+print(f"test_MSE = {mean_squared_error(y_test, test_pred_y)}")
