@@ -135,30 +135,29 @@ rf_reg.fit(X_train, y_train)
 train_pred_y = rf_reg.predict(X_train)
 test_pred_y = rf_reg.predict(X_test)
 
-print(X_train.shape)
-print(X_train)
-print(y_train.shape)
-feature_imp = pd.Series(plt.clf.feature_importances_,index=movies_df.feature_names).sort_values(ascending=False)
-print(feature_imp)
-#(1941, 5655)
-#(1941,)
-# plt.figure()
-# plt.scatter(X_train, y_train, s=20, edgecolor="black", c="darkorange", label="data")
-# plt.plot(X_test, y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
+def measured_predicted_plot(y_test, test_pred_y):
 
-# plt.xlabel("data")
-# plt.ylabel("target")
-# plt.title("Decision Tree Regression")
-# plt.legend()
-# plt.show()
+    fig, ax = plt.subplots()
+    ax.scatter(y_test, test_pred_y)
+    ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
+    ax.set_xlabel('Measured')
+    ax.set_ylabel('Predicted')
+    plt.show()
+
+
+def another_plot(y_test, test_pred_y):
+    df = pd.DataFrame({'Real Values':y_test, 'Predicted Values':test_pred_y})
+    fig = px.scatter(df, x="Real Values", y="Predicted Values",  
+                    trendline="ols", 
+                    title="Graph of the model prediction")
+    fig.show()
+
+
 # print(f"train_MSE = {mean_squared_error(y_train, train_pred_y)}")
 # print(f"test_MSE = {mean_squared_error(y_test, test_pred_y)}")
 
 
-
-
 #Reference - Towards Data Science Article: Random Forest in Python Author: Will Koehrson
-
 
 
 def evaluate (test_pred_y, y_test):
