@@ -120,7 +120,8 @@ def organize_ratings(df):
         df.loc[df['rating'] == "ALL_AGES", 'rating'] = 'G'
         df.loc[df['rating'] == "16", 'rating'] = 'NC-17'
 
-
+#the difference between added and released is that added is when the movies are added to the platform
+#released is when the movie is released
 def listings_added_by_year(df):
     df = change_date_format(df)
     year_added_frequencies = df['date_added'].value_counts().to_dict()
@@ -340,6 +341,38 @@ def records_for_prediction(df):
     st.plotly_chart(fig)
 
 
+
+def year_frequencies(df):
+    return df['release_year'].value_counts()
+
+def count_values(df):
+
+    dict = df.to_dict()
+
+    return {key: (value+dict.get(key)) 
+            for key, value in dict.items()}
+
+
+
+def listings_by_year(df):
+    fig = px.scatter(df, x=df['Year Released'], y=df['Frequency'],
+	         size=year_freq_netflix_df['Frequency'], color=year_freq_netflix_df['Year Released'],
+                  log_x=True, size_max=60)
+    st.plotly_chart(fig)
+
+
+st.write("Let's see a comparison between distribution of movies")
+st.write("Netflix")
+year_freq_netflix = year_frequencies(netflix_df)
+year_freq_netflix_dict = count_values(year_freq_netflix)
+year_freq_netflix_df =  pd.DataFrame(list(year_freq_netflix_dict.items()),columns = ['Year Released','Frequency'])
+listings_by_year(year_freq_netflix_df)
+
+st.write("What about Amazon?")
+year_freq_amazon = year_frequencies(amazon_df)
+year_freq_amazon_dict = count_values(year_freq_amazon)
+year_freq_amazon_df =  pd.DataFrame(list(year_freq_amazon_dict.items()),columns = ['Year Released','Frequency'])
+listings_by_year(year_freq_netflix_df)
     
 amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
 netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
