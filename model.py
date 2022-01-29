@@ -14,8 +14,8 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 import warnings
-
 from sympy import E
+
 warnings.filterwarnings('ignore')
 
 
@@ -111,16 +111,16 @@ for column in ['title', 'director', 'leading_actor', 'listed_in']:
         [pd.DataFrame(data, columns=column_names), ohe_encoded], axis=1)
 
 
-# i needed to reset index bcz i had a reset index error
+#IndexError, therefore reset_index
 ohe_encoded = ohe_encoded.reset_index(drop=True)
 duration = movies_df['duration'].reset_index(drop=True)
-# im not encoding duration bcz its not a categorical feature
+# duration is not a categorical feature therefore no encoding needed
 X_encoded = pd.concat([ohe_encoded, duration], axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X_encoded, y_movies, test_size=0.2, random_state=42)
 
-# best parameters to use as of grid search function below
+#Grid Search Function gave me this parameters as the best parameters to use
 
 rf_reg = RandomForestRegressor(bootstrap=True, n_estimators=300,
                                max_depth=60, max_features=50, min_samples_split=2, verbose=1, n_jobs=2)
@@ -129,22 +129,49 @@ rf_reg = RandomForestRegressor(bootstrap=True, n_estimators=300,
 #test_MSE = 1.2269102747161142
 
 
+
+
 rf_reg.fit(X_train, y_train)
-
-
 train_pred_y = rf_reg.predict(X_train)
 test_pred_y = rf_reg.predict(X_test)
 
+print(X_train.shape)
+print(X_train)
+print(y_train.shape)
+feature_imp = pd.Series(plt.clf.feature_importances_,index=movies_df.feature_names).sort_values(ascending=False)
+print(feature_imp)
+#(1941, 5655)
+#(1941,)
+# plt.figure()
+# plt.scatter(X_train, y_train, s=20, edgecolor="black", c="darkorange", label="data")
+# plt.plot(X_test, y_test, color="cornflowerblue", label="max_depth=2", linewidth=2)
+
+# plt.xlabel("data")
+# plt.ylabel("target")
+# plt.title("Decision Tree Regression")
+# plt.legend()
+# plt.show()
 # print(f"train_MSE = {mean_squared_error(y_train, train_pred_y)}")
 # print(f"test_MSE = {mean_squared_error(y_test, test_pred_y)}")
 
-errors = abs(test_pred_y - y_test)
-mape = 100 * (np.mean(errors/test_pred_y))
-accuracy = 100 - mape
-print('Model Performance')
-print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
-print('Accuracy = {:0.2f}%.'.format(accuracy))
 
+
+
+#Reference - Towards Data Science Article: Random Forest in Python Author: Will Koehrson
+
+
+
+def evaluate (test_pred_y, y_test):
+    errors = abs(test_pred_y - y_test)
+    mape = 100 * (np.mean(errors/test_pred_y))
+    accuracy = 100 - mape
+    print('Model Performance')
+    print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
+    print('Accuracy = {:0.2f}%.'.format(accuracy))
+
+
+
+#Evaluating the data:
 # print("Input data", X_test.iloc[0])
 # print("Expected output",y_test.iloc[0]) #Tr.6.7 Te. 6.6
 # print("Predicted output", rf_reg.predict(X_test.iloc[0].values.reshape(1,-1))) #Tr6.31 Te.6.5

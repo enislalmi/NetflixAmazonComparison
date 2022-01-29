@@ -10,8 +10,11 @@ import plotly.io as pio
 
 
 
-st.header("Netflix VS Amazon - Comparison - From a Data Science Point of View")
-st.write("Seeing two giants of streaming platforms through data")
+st.title("Netflix VS Amazon - Comparison - From a Data Science Point of View")
+st.header("Seeing two giants of streaming platforms through data")
+st.sidebar.markdown("A comparison between Netflix and Amazon Prime as Streaming Platforms")
+st.sidebar.markdown("On this website you will be able to see the main differences between these two giants in the listings they offer. We will try to answer some of your questions using their databases and visualizing the most important features. Enjoy!")
+
 
 netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
@@ -104,6 +107,15 @@ def geo_map(df):
     locationmode='country names',
     z=df['freq'])
     map = go.Figure(data=[data])
+    map.add_annotation(dict(font=dict(color='yellow',size=15),
+                                        x=0,
+                                        y=-0.12,
+                                        showarrow=False,
+                                        text="As we can see from this graph the United States and India have the greatest distribution of movies.",
+                                        textangle=0,
+                                        xanchor='left',
+                                        xref="paper",
+                                        yref="paper"))
     st.plotly_chart(map)
   
 
@@ -132,6 +144,7 @@ def listings_added_by_year(df):
     fig.update_xaxes(
         dtick="M1",
         tickformat="%b\n%Y")
+    
     st.plotly_chart(fig)
 
 
@@ -148,32 +161,33 @@ def filling_missing_data_model(df):
     return df
 
 
-st.write("Where were Netflix movies shot?")
+st.subheader("Where were Netflix movies shot?")
 geo_map(geo_netflix_df)  
-st.write("Where were Amazon movies shot?")
+st.subheader("Where were Amazon movies shot?")
 geo_map(geo_amazon_df) 
 
 def listings_frequencies(df):
     fig = px.scatter(df, y=df['Type of Listing'], x=df["Frequency"])
     fig.update_traces(marker_size=10)
+   
     st.plotly_chart(fig)
 
 
-st.write("What kind of shows are we watching on Netfix?")
+st.subheader("What kind of shows are we watching on Netfix?")
 netflix_shows_freq = show_frequencies(netflix_df)
 netflix_shows_freq = cleanup_multiple_listings(netflix_shows_freq)
 shows_netflix_df =  pd.DataFrame(list(netflix_shows_freq.items()),columns = ['Type of Listing','Frequency'])
 listings_frequencies(shows_netflix_df)
 
 
-st.write("What kind of shows are we watching on Amazon?")
+st.subheader("What kind of shows are we watching on Amazon?")
 amazon_shows_freq = show_frequencies(amazon_df)
 amazon_shows_freq = cleanup_multiple_listings(amazon_shows_freq)
 shows_amazon_df =  pd.DataFrame(list(amazon_shows_freq.items()),columns = ['Type of Listing','Frequency'])
 listings_frequencies(shows_amazon_df)
 
 
-st.write("How are the two platforms divided in the type of listings they have?")
+st.subheader("How are the two platforms divided in the type of listings they have?")
 def bar_frequencies_both(shows_amazon_df, shows_netflix_df):
     amazon_platform = 'Amazon'
     netflix_platform = 'Netflix'
@@ -193,12 +207,21 @@ def content_rating(df):
     fig = px.pie(df, values=df['rating'].value_counts(), names=df['rating'].dropna().unique(),
                 title='Ratings of the listings:')
     fig.update_traces(textposition='inside', textinfo='percent+label')
+    fig.add_annotation(dict(font=dict(color='yellow',size=15),
+                                        x=0,
+                                        y=-0.12,
+                                        showarrow=False,
+                                        text="If you are sharing your account with your family, kids or friends?",
+                                        textangle=0,
+                                        xanchor='left',
+                                        xref="paper",
+                                        yref="paper"))
     st.plotly_chart(fig)
 
-st.write("Which is the target audience of Netflix? How is the content rating of its shows? ")
+st.subheader("Which is the target audience of Netflix? How is the content rating of its shows? ")
 content_rating(netflix_df)
 
-st.write("Which is the target audience of Amazon? How is the content rating of its shows? ")
+st.subheader("Which is the target audience of Amazon? How is the content rating of its shows? ")
 content_rating(amazon_df)
 
 def newest_oldest_listing():
@@ -218,23 +241,25 @@ def newest_oldest_listing():
     )
 
     fig_dict = dict(data=data, layout=layout)
+    
 
     st.plotly_chart(fig_dict)
 
-st.write("What are the oldest and newest listings?")
+st.subheader("What are the oldest and newest listings?")
 
 newest_oldest_listing()
 
 
-st.write("How are the movies added by years in Netflix?")
+st.subheader("How are the movies added by years in Netflix?")
 listings_added_by_year(netflix_df)
 
 def released_available(df):
     df = change_date_format(df)
     fig = px.scatter(df.dropna(), x="date_added", y='release_year', color="duration", symbol="type")
+    
     st.plotly_chart(fig)
-st.write("When were the listings released and when did they become available to us?")
-st.write("Netflix")
+st.subheader("When were the listings released and when did they become available to us?")
+st.markdown("Netflix")
 released_available(netflix_df)
 
 
@@ -268,10 +293,19 @@ def titles_in_common(df):
         align='center', font=dict(color='white', size=11)
         ))
     ])
+    fig.add_annotation(dict(font=dict(color='yellow',size=15),
+                                        x=0,
+                                        y=-0.12,
+                                        showarrow=False,
+                                        text="How many listings can you watch on both platforms? Is it worth having both of them?",
+                                        textangle=0,
+                                        xanchor='left',
+                                        xref="paper",
+                                        yref="paper"))
     st.plotly_chart(fig)
 
 
-st.write("What are the titles in common between Netflix and Amazon?")
+st.subheader("What are the titles in common between Netflix and Amazon?")
 common_titles = merge_on_title(netflix_df, amazon_df)
 titles_in_common(common_titles)
 
@@ -296,7 +330,7 @@ def title_statistics(df1, df2):
 
     st.plotly_chart(fig)
 
-st.write("Show me some statistics!")
+st.subheader("Show me some statistics!")
 title_statistics(netflix_df, amazon_df)
 
 def fix_modelling_data(concat_df1, concat_df2):
@@ -361,14 +395,15 @@ def listings_by_year(df):
     st.plotly_chart(fig)
 
 
-st.write("Let's see a comparison between distribution of movies")
-st.write("Netflix")
+st.subheader("Let's see a comparison between distribution of movies")
+st.markdown("Netflix")
 year_freq_netflix = year_frequencies(netflix_df)
 year_freq_netflix_dict = count_values(year_freq_netflix)
 year_freq_netflix_df =  pd.DataFrame(list(year_freq_netflix_dict.items()),columns = ['Year Released','Frequency'])
 listings_by_year(year_freq_netflix_df)
 
-st.write("What about Amazon?")
+st.markdown("What about Amazon?")
+
 year_freq_amazon = year_frequencies(amazon_df)
 year_freq_amazon_dict = count_values(year_freq_amazon)
 year_freq_amazon_df =  pd.DataFrame(list(year_freq_amazon_dict.items()),columns = ['Year Released','Frequency'])
