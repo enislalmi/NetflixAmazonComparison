@@ -256,6 +256,72 @@ def titles_in_common(df):
     return fig
 
 
+#color palette differs in the functions
+def show_dataframe_netflix(df):
+    
+    
+#type	title	director	cast	country	date_added	release_year	rating	duration	listed_in	description
+
+    fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=['<b>Title</b>',
+                    '<b>Type of Listing</b>',
+                    '<b>Director</b>','<b>Cast</b>','<b>Country</b>','<b>Date added</b>',
+                    '<b>Release Year</b>','<b>Rating</b>','<b>Duration</b>','<b>Listed in</b>'],
+            line_color='rgb(86,77,77)', fill_color='rgb(131,16,16)',
+            align='center', font=dict(color='black', size=12)
+        ),
+        cells=dict(
+            values=[df['title'], df['type'], df['director'], df['cast'], df['country'], df['date_added'], df['release_year'], df['rating'], df['duration'], df['listed_in']],
+            line_color='rgb(86,77,77)',
+            fill_color='rgb(131,16,16)',
+            align='center', font=dict(color='white', size=10)
+        ))
+    ])
+    fig.add_annotation(dict(font=dict(color='yellow', size=17),
+                            x=0,
+                            y=-0.12,
+                            showarrow=False,
+                            text="What dataframes are we using?",
+                            textangle=0,
+                            xanchor='left',
+                            xref="paper",
+                            yref="paper"))
+    return fig
+
+
+def show_dataframe_amazon(df):
+    
+    
+#type	title	director	cast	country	date_added	release_year	rating	duration	listed_in	description
+
+    fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=['<b>Title</b>',
+                    '<b>Type of Listing</b>',
+                    '<b>Director</b>','<b>Cast</b>','<b>Country</b>','<b>Date added</b>',
+                    '<b>Release Year</b>','<b>Rating</b>','<b>Duration</b>','<b>Listed in</b>'],
+            line_color='rgb(206, 169, 104)', fill_color=' rgb(45, 191, 248)',
+            align='center', font=dict(color='black', size=12)
+        ),
+        cells=dict(
+            values=[df['title'], df['type'], df['director'], df['cast'], df['country'], df['date_added'], df['release_year'], df['rating'], df['duration'], df['listed_in']],
+            line_color='rgb(206, 169, 104)',
+            fill_color='rgb(228, 192, 131)',
+            align='center', font=dict(color='white', size=10)
+        ))
+    ])
+    fig.add_annotation(dict(font=dict(color='yellow', size=17),
+                            x=0,
+                            y=-0.12,
+                            showarrow=False,
+                            text="What dataframes are we using?",
+                            textangle=0,
+                            xanchor='left',
+                            xref="paper",
+                            yref="paper"))
+    return fig
+
 def title_statistics(df1, df2):
     netflix_titles = set(df1['title'])
     amazon_titles = set(df2['title'])
