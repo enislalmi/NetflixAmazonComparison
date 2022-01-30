@@ -161,7 +161,7 @@ netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
 model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
 
 st.write("Modelling based on what?")
-records_for_prediction(model_df)
+st.plotly_chart(records_for_prediction(model_df))
 st.caption('Lastly we are going to present some Modelling. The Modelling is based on the afore mentioned table.')
 st.caption('The modelling is using OHE-Encoding, best for Categorical Data.')
 st.caption('The Model will use Random Forest Regressor to give us a prediction based on our records.')
