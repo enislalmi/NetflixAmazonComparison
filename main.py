@@ -19,10 +19,12 @@ st.sidebar.markdown(
     "A comparison between Netflix and Amazon Prime as Streaming Platforms")
 st.sidebar.markdown("On this website you will be able to see the main differences between these two giants in the listings they offer. We will try to answer some of your questions using their databases and visualizing the most important features. Enjoy!")
 
+st.caption('The first thing we will do is cleanup the dataset. Such actions can be seen in the code')
 
 netflix_df = pd.read_csv("netflix_titles.csv")
 amazon_df = pd.read_csv("amazon_prime_titles.csv")
 imdb_df = pd.read_csv('imdb_titles.csv')
+
 
 
 # Some cleaup
