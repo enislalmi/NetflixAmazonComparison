@@ -1,20 +1,13 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from pytest import param
-import seaborn as sns
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error
-import streamlit as st
 import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
 import plotly.io as pio
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
 import warnings
-from sympy import E
 
 warnings.filterwarnings('ignore')
 
@@ -80,97 +73,88 @@ def merge_on_title(df1, df2):
     return pd.merge(df1, df2, how='inner', on=['title'])
 
 
-netflix_df = pd.read_csv("netflix_titles.csv")
-amazon_df = pd.read_csv("amazon_prime_titles.csv")
-imdb_df = pd.read_csv('imdb_titles.csv')
-amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
-netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
-model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
-
-movies_df, shows_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
-
-# Movies dataset
-
-X_movies = movies_df[['title', 'director', 'leading_actor', 'listed_in']]
-y_movies = movies_df['vote_average']
-
-
-ohe = preprocessing.OneHotEncoder(handle_unknown='ignore')
-
-ohe_encoded = pd.DataFrame()
-
-
-# one hot encoding, each records gets a unique 01 number
-for column in ['title', 'director', 'leading_actor', 'listed_in']:
-
-    data = ohe.fit_transform(X_movies[column].values.reshape(-1, 1)).toarray()
-
-    column_names = ohe.get_feature_names([column])
-
-    ohe_encoded = pd.concat(
-        [pd.DataFrame(data, columns=column_names), ohe_encoded], axis=1)
-
-
-#IndexError, therefore reset_index
-ohe_encoded = ohe_encoded.reset_index(drop=True)
-duration = movies_df['duration'].reset_index(drop=True)
-# duration is not a categorical feature therefore no encoding needed
-X_encoded = pd.concat([ohe_encoded, duration], axis=1)
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X_encoded, y_movies, test_size=0.2, random_state=42)
-
-#Grid Search Function gave me this parameters as the best parameters to use
-
-rf_reg = RandomForestRegressor(bootstrap=True, n_estimators=300,
-                               max_depth=60, max_features=50, min_samples_split=2, verbose=1, n_jobs=2)
-
-#train_MSE = 0.6535916391533556
-#test_MSE = 1.2269102747161142
-
-
-
-
-rf_reg.fit(X_train, y_train)
-train_pred_y = rf_reg.predict(X_train)
-test_pred_y = rf_reg.predict(X_test)
-
-def measured_predicted_plot(y_test, test_pred_y):
-
-    fig, ax = plt.subplots()
-    ax.scatter(y_test, test_pred_y)
-    ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
-    ax.set_xlabel('Measured')
-    ax.set_ylabel('Predicted')
-    plt.show()
-
-
-def another_plot(y_test, test_pred_y):
-    df = pd.DataFrame({'Real Values':y_test, 'Predicted Values':test_pred_y})
-    fig = px.scatter(df, x="Real Values", y="Predicted Values",  
-                    trendline="ols", 
-                    title="Graph of the model prediction")
-    fig.show()
-
-
-# print(f"train_MSE = {mean_squared_error(y_train, train_pred_y)}")
-# print(f"test_MSE = {mean_squared_error(y_test, test_pred_y)}")
-
-
-#Reference - Towards Data Science Article: Random Forest in Python Author: Will Koehrson
-
-
-def evaluate (test_pred_y, y_test):
+def evaluate(test_pred_y, y_test):
     errors = abs(test_pred_y - y_test)
     mape = 100 * (np.mean(errors/test_pred_y))
     accuracy = 100 - mape
-    print('Model Performance')
-    print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
+    print('Performance')
     print('Accuracy = {:0.2f}%.'.format(accuracy))
 
+# ordinary least square
 
 
-#Evaluating the data:
+def measured_predicted_plot(y_test, test_pred_y):
+    df = pd.DataFrame({'Real Values': y_test, 'Predicted Values': test_pred_y})
+    fig = px.scatter(df, x="Real Values", y="Predicted Values",
+                     trendline="ols",
+                     title="Graph of the model prediction")
+
+    return fig
+
+
+# Reference - Towards Data Science Article: Random Forest in Python Author: Will Koehrson
+
+# Evaluating the data:
 # print("Input data", X_test.iloc[0])
 # print("Expected output",y_test.iloc[0]) #Tr.6.7 Te. 6.6
 # print("Predicted output", rf_reg.predict(X_test.iloc[0].values.reshape(1,-1))) #Tr6.31 Te.6.5
+
+
+def run_model():
+
+    netflix_df = pd.read_csv("netflix_titles.csv")
+    amazon_df = pd.read_csv("amazon_prime_titles.csv")
+    imdb_df = pd.read_csv('imdb_titles.csv')
+    amazon_imdb_df = merge_on_title(amazon_df, imdb_df)
+    netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
+
+    movies_df, shows_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
+
+    # Movies dataset
+    X_movies = movies_df[['title', 'director', 'leading_actor', 'listed_in']]
+    y_movies = movies_df['vote_average']
+
+    ohe = preprocessing.OneHotEncoder(handle_unknown='ignore')
+
+    ohe_encoded = pd.DataFrame()
+
+    # one hot encoding, each records gets a unique 01 number
+    for column in ['title', 'director', 'leading_actor', 'listed_in']:
+
+        data = ohe.fit_transform(
+            X_movies[column].values.reshape(-1, 1)).toarray()
+
+        column_names = ohe.get_feature_names([column])
+
+        ohe_encoded = pd.concat(
+            [pd.DataFrame(data, columns=column_names), ohe_encoded], axis=1)
+
+    # IndexError, therefore reset_index
+    ohe_encoded = ohe_encoded.reset_index(drop=True)
+    duration = movies_df['duration'].reset_index(drop=True)
+    # duration is not a categorical feature therefore no encoding needed
+    X_encoded = pd.concat([ohe_encoded, duration], axis=1)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_encoded, y_movies, test_size=0.2, random_state=42)
+
+    # Grid Search Function gave me this parameters as the best parameters to use
+
+    rf_reg = RandomForestRegressor(bootstrap=True, n_estimators=300,
+                                   max_depth=60, max_features=50, min_samples_split=2)
+
+    rf_reg.fit(X_train, y_train)
+    train_pred_y = rf_reg.predict(X_train)
+    test_pred_y = rf_reg.predict(X_test)
+
+    # Train data
+    train_plot = measured_predicted_plot(y_train, train_pred_y)
+
+    # Test data
+    test_plot = measured_predicted_plot(y_test, test_pred_y)
+
+    return train_plot,test_plot
+
+
+if __name__ == '__main__':
+    run_model()

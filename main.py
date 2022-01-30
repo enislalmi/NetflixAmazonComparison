@@ -7,6 +7,10 @@ import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
 import plotly.io as pio
+from model import run_model
+
+train_plot,test_plot  = run_model()
+
 
 
 st.title("Netflix VS Amazon - Comparison - From a Data Science Point of View")
@@ -432,6 +436,14 @@ netflix_imdb_df = merge_on_title(netflix_df, imdb_df)
 model_df = fix_modelling_data(amazon_imdb_df, netflix_imdb_df)
 st.write("Modelling based on what?")
 records_for_prediction(model_df)
+
+st.subheader("Modelling of the Training Data")
+
+st.plotly_chart(train_plot)
+
+st.subheader("Modelling of the Testing Data")
+
+st.plotly_chart(test_plot)
 
 
 # if __name__ == '__main__':
