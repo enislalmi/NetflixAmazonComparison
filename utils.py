@@ -16,8 +16,6 @@ amazon_df = pd.read_csv("amazon_prime_titles.csv")
 imdb_df = pd.read_csv('imdb_titles.csv')
 
 
-
-
 def delete_ids(df):
     df = df.drop(["show_id"], axis=1)
     return df
@@ -336,8 +334,6 @@ def count_values(df):
 
     return {key: (value+dict.get(key))
             for key, value in dict.items()}
-
-
 
 
 def listings_by_year(df):

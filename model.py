@@ -153,7 +153,7 @@ def run_model():
     # Test data
     test_plot = measured_predicted_plot(y_test, test_pred_y)
 
-    return train_plot,test_plot
+    return train_plot, test_plot
 
 
 if __name__ == '__main__':

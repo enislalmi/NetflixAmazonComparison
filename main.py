@@ -13,7 +13,6 @@ from utils import *
 train_plot, test_plot = run_model()
 
 
-
 st.title("Netflix VS Amazon - Comparison - From a Data Science Point of View")
 st.header("Seeing two giants of streaming platforms through data")
 st.sidebar.markdown(
@@ -26,7 +25,7 @@ amazon_df = pd.read_csv("amazon_prime_titles.csv")
 imdb_df = pd.read_csv('imdb_titles.csv')
 
 
-#Some cleaup
+# Some cleaup
 netflix_df = delete_ids(netflix_df)
 amazon_df = delete_ids(amazon_df)
 netflix_df = fill_missing_data(netflix_df)
@@ -60,7 +59,7 @@ netflix_shows_freq = show_frequencies(netflix_df)
 netflix_shows_freq = cleanup_multiple_listings(netflix_shows_freq)
 shows_netflix_df = pd.DataFrame(list(netflix_shows_freq.items()), columns=[
                                 'Type of Listing', 'Frequency'])
-                              
+
 st.plotly_chart(listings_frequencies(shows_netflix_df))
 
 
@@ -71,7 +70,6 @@ amazon_shows_freq = cleanup_multiple_listings(amazon_shows_freq)
 shows_amazon_df = pd.DataFrame(list(amazon_shows_freq.items()), columns=[
                                'Type of Listing', 'Frequency'])
 st.plotly_chart(listings_frequencies(shows_amazon_df))
-
 
 
 st.subheader(
@@ -91,11 +89,9 @@ st.subheader(
 st.plotly_chart(content_rating(netflix_df))
 
 
-
 st.subheader(
     "Which is the target audience of Amazon? How is the content rating of its shows? ")
 st.plotly_chart(content_rating(amazon_df))
-
 
 
 st.subheader("What are the oldest and newest listings?")
@@ -148,6 +144,3 @@ st.plotly_chart(train_plot)
 
 st.subheader("Modelling of the Testing Data")
 st.plotly_chart(test_plot)
-
-
-
