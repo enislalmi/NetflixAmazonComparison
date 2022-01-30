@@ -265,8 +265,8 @@ def title_statistics(df1, df2):
     common_titles = set(merged_titles['title'])
     unique_titles_netflix = netflix_titles.difference(common_titles)
     unique_titles_amazon = amazon_titles.difference(common_titles)
-    fig = px.bar(x=["Netflix", "Amazon", "Common"], y=[len(unique_titles_netflix), len(
-        unique_titles_amazon), len(common_titles)], title="Listings Statistics", color=['red', 'blue', 'orange'])
+    fig = px.bar(x=["Amazon", "Netflix", "Common"], y=[len(unique_titles_amazon), len(
+        unique_titles_netflix), len(common_titles)], title="Listings Statistics", color=["Amazon", "Netflix", 'In Common'])
     fig.update_layout(
         title="Netflix and Amazon in numbers",
         xaxis_title="Platforms",
