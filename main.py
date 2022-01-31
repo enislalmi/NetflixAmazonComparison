@@ -118,9 +118,10 @@ st.subheader(
 st.plotly_chart(content_rating(amazon_df))
 
 
-st.subheader("What are the oldest and newest listings?")
-st.plotly_chart(newest_oldest_listing())
-st.caption('This is a very easy graph, showing which is the oldest and newest listing in the platform.')
+#This is a very easy graph, I did it as I had in the proposed questions
+#st.subheader("What are the oldest and newest listings?")
+#st.plotly_chart(newest_oldest_listing())
+#st.caption('This is a very easy graph, showing which is the oldest and newest listing in the platform.')
 
 st.subheader("How are the movies added by years in Netflix?")
 st.plotly_chart(listings_added_by_year(netflix_df))

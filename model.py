@@ -11,7 +11,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-
+#the fixed data that is going to be used for prediction
 def fix_modelling_data(concat_df1, concat_df2):
     all_imdb = pd.concat([concat_df1, concat_df2])
     all_imdb_up = all_imdb[['title', 'director', 'type',
@@ -40,9 +40,7 @@ def fix_modelling_data(concat_df1, concat_df2):
 
 
 def records_for_prediction(df):
-    # all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average','cast']]
-
-    #type, listedin, director, vote_average, duration, title
+   
     title = df['title']
     type_of_listing = df['type']
     listed_in = df['listed_in']
@@ -66,13 +64,14 @@ def records_for_prediction(df):
             align='center', font=dict(color='white', size=11)
         ))
     ])
-    st.plotly_chart(fig)
+    return fig
 
 
 def merge_on_title(df1, df2):
     return pd.merge(df1, df2, how='inner', on=['title'])
 
 
+#evaluate is used to print the performance. Numbers I got Train: 0.8, Test:1.2
 def evaluate(test_pred_y, y_test):
     errors = abs(test_pred_y - y_test)
     mape = 100 * (np.mean(errors/test_pred_y))
@@ -80,9 +79,7 @@ def evaluate(test_pred_y, y_test):
     print('Performance')
     print('Accuracy = {:0.2f}%.'.format(accuracy))
 
-# ordinary least square
-
-
+# ordinary least square is used 
 def measured_predicted_plot(y_test, test_pred_y):
     df = pd.DataFrame({'Real Values': y_test, 'Predicted Values': test_pred_y})
     fig = px.scatter(df, x="Real Values", y="Predicted Values",
@@ -93,7 +90,6 @@ def measured_predicted_plot(y_test, test_pred_y):
 
 
 # Reference - Towards Data Science Article: Random Forest in Python Author: Will Koehrson
-
 # Evaluating the data:
 # print("Input data", X_test.iloc[0])
 # print("Expected output",y_test.iloc[0]) #Tr.6.7 Te. 6.6
@@ -132,7 +128,7 @@ def run_model():
     # IndexError, therefore reset_index
     ohe_encoded = ohe_encoded.reset_index(drop=True)
     duration = movies_df['duration'].reset_index(drop=True)
-    # duration is not a categorical feature therefore no encoding needed
+    #duration is not a categorical feature therefore no encoding needed
     X_encoded = pd.concat([ohe_encoded, duration], axis=1)
 
     X_train, X_test, y_train, y_test = train_test_split(
