@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 import plotly.graph_objs as go
-import plotly as py
 import plotly.express as px
 import plotly.io as pio
 from sklearn import preprocessing

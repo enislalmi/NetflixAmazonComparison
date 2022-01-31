@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
-import plotly.io as pio
 
 
 netflix_df = pd.read_csv("netflix_titles.csv")
@@ -124,6 +122,7 @@ def organize_ratings(df):
 def listings_added_by_year(df):
     df = change_date_format(df)
     year_added_frequencies = df['date_added'].value_counts().to_dict()
+    year_added_frequencies = dict(sorted(year_added_frequencies.items(), key= lambda x : x[0]))
     year_added_frequencies = pd.DataFrame(
         year_added_frequencies.items(), columns=['Year Added', 'Frequency'])
     fig = px.line(year_added_frequencies, x='Year Added', y='Frequency',
