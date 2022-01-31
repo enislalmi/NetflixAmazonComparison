@@ -7,8 +7,6 @@ import plotly.graph_objs as go
 import plotly as py
 import plotly.express as px
 import plotly.io as pio
-# ''' Function to delete the ids, as the title is a unique value and having the ids is just
-# unneccesary'''
 
 
 netflix_df = pd.read_csv("netflix_titles.csv")
@@ -16,11 +14,15 @@ amazon_df = pd.read_csv("amazon_prime_titles.csv")
 imdb_df = pd.read_csv('imdb_titles.csv')
 
 
+# ''' Function to delete the ids, as the title is a unique value and having the ids is just
+# unneccesary'''
+
 def delete_ids(df):
     df = df.drop(["show_id"], axis=1)
     return df
 
 
+#This function is used at the beggining to check what columns had missing data
 def check_missing_data(df):
     for i in df.columns:
         null_rate = df[i].isna().sum() / len(df) * 100
@@ -29,7 +31,7 @@ def check_missing_data(df):
         else:
             print(f"Column {i} has no missing data.")
 
-
+#This function is used to fill the missing data of the records as specified below
 def fill_missing_data(df):
     #'''For the country missing data the most common country could be used to fill null values'''
     df['country'] = df['country'].fillna(df['country'].mode()[0])
@@ -43,7 +45,7 @@ def fill_missing_data(df):
     df.drop_duplicates(inplace=True)
     return df
 
-
+#The data fromat has been changed in both databases as yo offer only the year.
 def change_date_format(df):
     df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
     #df["date_added"] = df['date_added'].dt.strftime('%m-%Y')
@@ -54,7 +56,7 @@ def change_date_format(df):
 
 # For the movies/tv shows that have more than country, I will be countring only the first country
 # which coincides with the country where the movie was filmed the most
-
+#I have used the same function for Cast as the first name gives me the leading actor
 def cleanup_multiple_listings(df):
 
     dict = df.to_dict()
@@ -66,23 +68,23 @@ def cleanup_multiple_listings(df):
 def country_frequencies(df):
     return df['country'].value_counts()
 
-
+#returns the show genre and its frequencies for each genre
 def show_frequencies(df):
     return df['listed_in'].value_counts()
 
-
+#explore
 def information(df):
     return df.info()
 
-
+#explore
 def description(df):
     return df.describe()
 
-
+#explore
 def correlation(df):
     return df.corr()
 
-
+#visualizing maps
 def geo_map(df):
     data = dict(
         type='choropleth',
@@ -102,6 +104,7 @@ def geo_map(df):
     return map
 
 
+#organizing ratings to be of the same type in dfs
 def organize_ratings(df):
     df.loc[df['rating'] == "13+", 'rating'] = "PG-13"
     df.loc[df['rating'] == "16+", 'rating'] = 'NC-17'
@@ -115,10 +118,9 @@ def organize_ratings(df):
     df.loc[df['rating'] == "ALL_AGES", 'rating'] = 'G'
     df.loc[df['rating'] == "16", 'rating'] = 'NC-17'
 
+
 # the difference between added and released is that added is when the movies are added to the platform
 # released is when the movie is released
-
-
 def listings_added_by_year(df):
     df = change_date_format(df)
     year_added_frequencies = df['date_added'].value_counts().to_dict()
@@ -134,6 +136,7 @@ def listings_added_by_year(df):
     return fig
 
 
+#fill missing data on merged dfs
 def filling_missing_data_model(df):
     #'''For the country missing data the most common country could be used to fill null values'''
     df['country_x'] = df['country_x'].fillna(df['country_x'].mode()[0])
@@ -147,6 +150,7 @@ def filling_missing_data_model(df):
     return df
 
 
+#visualising the frequencies of the listings
 def listings_frequencies(df):
     fig = px.scatter(df, y=df['Type of Listing'], x=df["Frequency"])
     fig.update_traces(marker_size=10)
@@ -154,6 +158,7 @@ def listings_frequencies(df):
     return fig
 
 
+#comparison between amazon and netflix show frequencies
 def bar_frequencies_both(shows_amazon_df, shows_netflix_df):
     amazon_platform = 'Amazon'
     netflix_platform = 'Netflix'
@@ -215,10 +220,12 @@ def newest_oldest_listing():
     return fig_dict
 
 
+#merging on unique value title
 def merge_on_title(df1, df2):
     return pd.merge(df1, df2, how='inner', on=['title'])
 
 
+#this are the only columns that will be used in the model
 def only_needed_columns_model(df):
     df = df[['title', 'type_x', 'director_x',
              'duration_x', 'listed_in_x', 'rating_x']]
@@ -360,10 +367,9 @@ def fix_modelling_data(concat_df1, concat_df2):
     return all_imdb_up
 
 
+#imdb palette
 def records_for_prediction(df):
-    # all_imdb[['title','director', 'type', 'duration', 'listed_in', 'vote_average','cast']]
-
-    #type, listedin, director, vote_average, duration, title
+    
     title = df['title']
     type_of_listing = df['type']
     listed_in = df['listed_in']
