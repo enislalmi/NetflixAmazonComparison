@@ -7,6 +7,8 @@ Please run from terminal using streamlit run main.py
 
 The databases used can be found here in .csv format
 
+All visualizations are interactive, if you want to check for a specific thing, you need just to click on the graphs.
+
 Remark: If you have any issues on visualizing the graphs, please make sure you have the latest libraries downloaded.
 
 Thank you.
